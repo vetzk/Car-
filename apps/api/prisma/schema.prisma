@@ -1,0 +1,154 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "mysql"
+  url      = env("DATABASE_URL")
+}
+
+model appointments {
+  id              Int      @id @unique(map: "id") @default(autoincrement())
+  userId          Int
+  appointmentDate DateTime @db.DateTime(0)
+  location        String   @db.VarChar(255)
+  type            String   @db.VarChar(255)
+  createdAt       DateTime @default(now()) @db.Timestamp(0)
+  user            user     @relation(fields: [userId], references: [id], onDelete: NoAction, onUpdate: NoAction, map: "Appointments_fk1")
+
+  @@index([userId], map: "Appointments_fk1")
+}
+
+model car {
+  id          Int          @id @unique(map: "id") @default(autoincrement())
+  carModel    String       @db.VarChar(255)
+  price       Int
+  color       String       @db.VarChar(255)
+  description String       @db.Text
+  type        String       @db.VarChar(255)
+  status      String       @db.VarChar(255)
+  year        Int
+  carfeature  carfeature[]
+  carspec     carspec[]
+  cart        cart[]
+  reviews     reviews[]
+}
+
+model carfeature {
+  id          Int    @id @unique(map: "id") @default(autoincrement())
+  carId       Int
+  feature     String @db.VarChar(255)
+  featureDesc String @db.Text
+  car         car    @relation(fields: [carId], references: [id], onDelete: NoAction, onUpdate: NoAction, map: "carFeature_fk1")
+
+  @@index([carId], map: "carFeature_fk1")
+}
+
+model carspec {
+  id              Int    @id @unique(map: "id") @default(autoincrement())
+  carId           Int
+  battery         String @db.VarChar(255)
+  range           String @db.VarChar(255)
+  acceleration    String @db.VarChar(255)
+  drive           String @db.VarChar(255)
+  weight          String @db.VarChar(255)
+  cargo           String @db.VarChar(255)
+  wheels          String @db.VarChar(255)
+  seating         String @db.VarChar(255)
+  displays        String @db.VarChar(255)
+  groundClearance String @db.VarChar(255)
+  overallWidth    String @db.VarChar(255)
+  overallHeight   String @db.VarChar(255)
+  overallLength   String @db.VarChar(255)
+  trackFrontRear  String @db.VarChar(255)
+  supercharging   String @db.VarChar(255)
+  chargingSpeed   String @db.VarChar(255)
+  car             car    @relation(fields: [carId], references: [id], onDelete: NoAction, onUpdate: NoAction, map: "CarSpec_fk1")
+
+  @@index([carId], map: "CarSpec_fk1")
+}
+
+model cart {
+  id              Int       @id @unique(map: "id") @default(autoincrement())
+  carId           Int
+  userId          Int
+  orderCode       String    @db.VarChar(255)
+  qty             Int
+  totalPrice      Int
+  status          String    @db.VarChar(255)
+  transactionDate DateTime  @db.DateTime(0)
+  car             car       @relation(fields: [carId], references: [id], onDelete: NoAction, onUpdate: NoAction, map: "Cart_fk1")
+  user            user      @relation(fields: [userId], references: [id], onDelete: NoAction, onUpdate: NoAction, map: "Cart_fk2")
+  payment         payment[]
+
+  @@index([carId], map: "Cart_fk1")
+  @@index([userId], map: "Cart_fk2")
+}
+
+model payment {
+  id            Int      @id @unique(map: "id") @default(autoincrement())
+  orderId       Int
+  paymentMethod String   @db.VarChar(255)
+  paymentDate   DateTime @db.DateTime(0)
+  amount        Int
+  status        String   @db.VarChar(255)
+  createdAt     DateTime @db.DateTime(0)
+  cart          cart     @relation(fields: [orderId], references: [id], onDelete: NoAction, onUpdate: NoAction, map: "Payment_fk1")
+
+  @@index([orderId], map: "Payment_fk1")
+}
+
+model reviews {
+  id         Int      @id @unique(map: "id") @default(autoincrement())
+  userId     Int
+  carId      Int
+  rating     Int
+  reviewDesc String   @db.Text
+  createdAt  DateTime @default(now()) @db.Timestamp(0)
+  user       user     @relation(fields: [userId], references: [id], onDelete: NoAction, onUpdate: NoAction, map: "Reviews_fk1")
+  car        car      @relation(fields: [carId], references: [id], onDelete: NoAction, onUpdate: NoAction, map: "Reviews_fk2")
+
+  @@index([userId], map: "Reviews_fk1")
+  @@index([carId], map: "Reviews_fk2")
+}
+
+model user {
+  id                 Int            @id @unique(map: "id") @default(autoincrement())
+  identificationCode String         @unique(map: "identificationCode") @db.VarChar(255)
+  email              String         @unique(map: "email") @db.VarChar(255)
+  username           String         @unique(map: "username") @db.VarChar(255)
+  password           String         @db.VarChar(255)
+  createdAt          DateTime       @default(now()) @db.Timestamp(0)
+  role               role         
+  isEmailVerified    Boolean        @default(false)
+  isDeleted          Boolean        @default(false)
+  twoFactorAuth      Boolean        @default(false)
+  balance            Int            @default(0)
+  otp                String?
+  otpExpiresAt       DateTime?
+  appointments       appointments[]
+  cart               cart[]
+  reviews            reviews[]
+  userprofile        userprofile[]
+}
+
+model userprofile {
+  id           Int       @id @unique(map: "id") @default(autoincrement())
+  userId       Int
+  firstName    String?   @db.VarChar(255)
+  lastName     String?   @db.VarChar(255)
+  address      String?   @db.VarChar(255)
+  imageProfile String?   @db.VarChar(255)
+  phoneNumber  String?   @db.VarChar(255)
+  dateOfBirth  DateTime? @db.DateTime(0)
+  gender       String?   @db.VarChar(255)
+  createdAt    DateTime  @default(now()) @db.Timestamp(0)
+  user         user      @relation(fields: [userId], references: [id], onDelete: NoAction, onUpdate: NoAction, map: "UserProfile_fk1")
+
+  @@index([userId], map: "UserProfile_fk1")
+}
+
+enum role{
+  USER
+  ADMIN
+}
