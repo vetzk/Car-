@@ -126,6 +126,7 @@ model user {
   balance            Int            @default(0)
   otp                String?
   otpExpiresAt       DateTime?
+  googleId           String?        @db.VarChar(255) 
   appointments       appointments[]
   cart               cart[]
   reviews            reviews[]

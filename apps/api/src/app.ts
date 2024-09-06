@@ -10,12 +10,15 @@ import cors from 'cors';
 import { PORT } from './config';
 import path from 'path';
 import { AuthRouter } from './routers/auth.router';
+import session from 'express-session';
+import passport from 'passport';
 export default class App {
   private app: Express;
 
   constructor() {
     this.app = express();
     this.configure();
+    this.initializePassport();
     this.routes();
     this.handleError();
   }
@@ -25,6 +28,18 @@ export default class App {
     this.app.use(json());
     this.app.use(urlencoded({ extended: true }));
     this.app.use('/assets', express.static(path.join(__dirname, '../public')));
+    this.app.use(
+      session({
+        secret: '8"f)6.n!thz3jY-',
+        resave: false,
+        saveUninitialized: true,
+      }),
+    );
+  }
+
+  private initializePassport(): void {
+    this.app.use(passport.initialize());
+    this.app.use(passport.session());
   }
 
   private handleError(): void {

@@ -291,6 +291,34 @@ export class AuthController {
       return next({
         success: false,
         message: 'Failed to send email',
+        error,
+      });
+    }
+  }
+
+  async resetPassword(req: Request, res: Response, next: NextFunction) {
+    const { password, confirmPassword } = req.body;
+    try {
+      if (res.locals.decrypt.identificationCode) {
+        await prisma.user.update({
+          data: {
+            password: await hashPassword(password),
+          },
+          where: {
+            identificationCode: res.locals.decrypt.identificationCode,
+          },
+        });
+        return res.status(200).send({
+          success: true,
+          message: 'Successfully rest your password. Please login',
+        });
+      }
+    } catch (error) {
+      console.log(error);
+      return next({
+        success: false,
+        message: 'Cannot reset your password',
+        error,
       });
     }
   }
