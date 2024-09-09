@@ -20,6 +20,19 @@
   .text-balance {
     text-wrap: balance;
   }
+  .no-scrollbar-arrows::-webkit-scrollbar-button {
+    display: none; /* Hides the scrollbar arrows in Chrome, Safari, and other WebKit browsers */
+  }
+  .custom-shadow {
+    box-shadow: -1px -8px 1px rgb(255, 255, 255); /* Adjust values for desired shadow */
+  }
+
+  .custom-shadow-bottom {
+    box-shadow: 1px 4.5px 1px rgb(255, 255, 255); /* Adjust values for desired shadow */
+  }
+  .custom-shadow-bottom-l {
+    box-shadow: 1px 5px 1px rgb(255, 255, 255); /* Adjust values for desired shadow */
+  }
 }
 
 @layer base {

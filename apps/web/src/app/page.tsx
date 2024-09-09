@@ -388,7 +388,10 @@ export default function Home() {
               </p>
             </div>
             {listText.map((val, i) => (
-              <div className="w-full flex flex-col item-center gap-5 p-5">
+              <div
+                key={i}
+                className="w-full flex flex-col item-center gap-5 p-5"
+              >
                 <div className="w-full flex justify-between items-center text-white">
                   <p className="text-xl">{val.title}</p>
                   <p
